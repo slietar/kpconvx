@@ -1,0 +1,12 @@
+
+**/__pycache__
+**/build
+**/*.egg-info
+**/dist
+*.so
+
+.vscode
+.idea
+.DS_Store
+**/.DS_Store
+**/*.out
