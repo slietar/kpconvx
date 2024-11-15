@@ -1,14 +1,28 @@
 # KPConvX: Modernizing Kernel Point Convolution with Kernel Attention
 
-<div align='left'>
+<div align='center'>
 <img src="assets/fig_kpconvx.png" alt="teaser" width="1200" />
 </div>
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/semantic-segmentation-on-s3dis-area5)](https://paperswithcode.com/sota/semantic-segmentation-on-s3dis-area5?p=kpconvx-modernizing-kernel-point-convolution)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/semantic-segmentation-on-scannet)](https://paperswithcode.com/sota/semantic-segmentation-on-scannet?p=kpconvx-modernizing-kernel-point-convolution)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/3d-point-cloud-classification-on-scanobjectnn)](https://paperswithcode.com/sota/3d-point-cloud-classification-on-scanobjectnn?p=kpconvx-modernizing-kernel-point-convolution)
+<div align="center">
+  <a href="https://paperswithcode.com/sota/semantic-segmentation-on-s3dis-area5?p=kpconvx-modernizing-kernel-point-convolution">
+    <img src="https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/semantic-segmentation-on-s3dis-area5" alt="PWC">
+  </a>
+  <a href="https://paperswithcode.com/sota/semantic-segmentation-on-scannet?p=kpconvx-modernizing-kernel-point-convolution">
+    <img src="https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/semantic-segmentation-on-scannet" alt="PWC">
+  </a>
+  <a href="https://paperswithcode.com/sota/3d-point-cloud-classification-on-scanobjectnn?p=kpconvx-modernizing-kernel-point-convolution">
+    <img src="https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/kpconvx-modernizing-kernel-point-convolution/3d-point-cloud-classification-on-scanobjectnn" alt="PWC">
+  </a>
+</div>
 
-
+<div align="center">
+  <b>
+    <a href="https://machinelearning.apple.com/research/kpconvx">[Blog]</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://arxiv.org/pdf/2405.13194">   [ArXiv]</a>
+  </b>
+</div>
 
 This repo is the official project repository of the paper **KPConvX: Modernizing Kernel Point Convolution with Kernel Attention**.
 
