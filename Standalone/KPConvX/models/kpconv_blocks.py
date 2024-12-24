@@ -562,7 +562,7 @@ class KPConv(nn.Module):
         # Gathering only worth if K > 25, nearest mode and depthwise_conv
         if self.gather_mode:
 
-            # Collect nearest kernel point weights -> (M, H, G, C//G, 0//G)
+            # Collect nearest kernel point weights -> (M, H, G, C//G, O//G)
             neighbors_weights = gather(self.weights, neighbors_1nn)
 
             # Apply influence weights
@@ -572,10 +572,10 @@ class KPConv(nn.Module):
 
             # Depthwise
             neighbors_weights = neighbors_weights.view(-1, H, self.groups, self.out_channels_per_group)  # (M, H, G=C, O//G)
-            neighbor_feats = neighbors_weights.view(-1, H, self.groups, 1)  # (M, H, C, 1)
+            neighbor_feats = neighbor_feats.view(-1, H, self.groups, 1)  # (M, H, C, 1)
 
             # Apply weights and summation
-            output_feats = torch.sum(neighbor_feats * neighbors_weights, dim=1)  # -> (M, G, 0//G)
+            output_feats = torch.sum(neighbor_feats * neighbors_weights, dim=1)  # -> (M, G, O//G)
             output_feats = output_feats.reshape((-1, self.out_channels))  # -> (M, O)
 
 
