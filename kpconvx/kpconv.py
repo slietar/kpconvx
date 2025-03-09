@@ -80,7 +80,7 @@ class KPConv(nn.Module):
       # (Q, H)
       influences = torch.relu(1 - distances / self.sigma)
 
-      return np.einsum('qh, qhco, qhc -> qo', influences, self.weights[kernel_point_indices, :, :], neighbor_features)
+      return torch.einsum('qh, qhco, qhc -> qo', influences, self.weights[kernel_point_indices, :, :], neighbor_features)
     else:
       # (Q, H, K)
       distances = torch.sqrt(((neighbor_points[:, :, None, :] - query_points[:, None, None, :] - self.kernel) ** 2).sum(dim=-1))
@@ -88,7 +88,7 @@ class KPConv(nn.Module):
       # (Q, H, K)
       influences = torch.relu(1 - distances / self.sigma)
 
-      return np.einsum('qhk, kco, qhc -> qo', influences, self.weights, neighbor_features)
+      return torch.einsum('qhk, kco, qhc -> qo', influences, self.weights, neighbor_features)
 
 
 if __name__ == '__main__':

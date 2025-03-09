@@ -10,35 +10,50 @@ def create_kernels(
   kernel_count: int,
   radius: float,
   shell_point_counts: Iterable[int], # Including center
+  _draw: bool = False,
 ):
   shell_point_counts_ = torch.tensor(shell_point_counts)
   shell_count = len(shell_point_counts_)
   shell_radii = 2 * torch.arange(shell_count) * radius / (2 * shell_count - 1)
 
-  start_angles = torch.rand((kernel_count, int(shell_point_counts_.sum()))) * torch.pi * 2
+  total_point_count = int(shell_point_counts_.sum())
   start_radii = shell_radii.repeat_interleave(shell_point_counts_)
-  positions = start_radii[..., None] * torch.stack([
-    torch.cos(start_angles),
-    torch.sin(start_angles),
-  ], dim=-1)
 
-  # from matplotlib import pyplot as plt
-  # fig, ax = plt.subplots()
+  match dimension:
+    case 2:
+      start_angles = torch.rand((kernel_count, total_point_count)) * torch.pi * 2
+      positions = start_radii[..., None] * torch.stack([
+        torch.cos(start_angles),
+        torch.sin(start_angles),
+      ], dim=-1)
+    case 3:
+      theta = torch.rand(kernel_count, total_point_count) * 2 * torch.pi
+      phi = (torch.rand(kernel_count, total_point_count) - 0.5) * torch.pi
+      positions = start_radii[..., None] * torch.stack([
+        torch.cos(theta) * torch.cos(phi),
+        torch.sin(theta) * torch.cos(phi),
+        torch.sin(phi),
+      ], dim=2)
+
+  if _draw:
+    from matplotlib import pyplot as plt
+    fig, ax = plt.subplots()
 
   for step in range(400):
-    # ax.clear()
+    if _draw:
+      ax.clear()
 
-    # for i in range(kernel_count):
-    #   ax.scatter(positions[i, :, 0], positions[i, :, 1])
+      for i in range(kernel_count):
+        ax.scatter(positions[i, :, 0], positions[i, :, 1])
 
-    # ax.set_aspect('equal')
-    # ax.set_xlim(-radius, radius)
-    # ax.set_ylim(-radius, radius)
-    # ax.grid()
+      ax.set_aspect('equal')
+      ax.set_xlim(-radius, radius)
+      ax.set_ylim(-radius, radius)
+      ax.grid()
 
-    # plt.draw()
-    # plt.pause(.1)
-    # plt.show(block=False)
+      plt.draw()
+      plt.pause(.01)
+      plt.show(block=False)
 
     diffs = positions[:, :, None, :] - positions[:, None, :, :]
     distances = torch.sqrt((diffs ** 2).sum(dim=-1, keepdim=True))
@@ -56,12 +71,14 @@ def create_kernels(
   return positions
 
 
-# create_kernels(
-#   dimension=2,
-#   kernel_count=2,
-#   radius=3.5,
-#   shell_point_counts=[1, 4, 8],
-# )
+if __name__ == '__main__':
+  create_kernels(
+    dimension=3,
+    kernel_count=1,
+    radius=3.5,
+    shell_point_counts=[1, 16, 32],
+    _draw=True,
+  )
 
 # create_kernels(
 #   dimension=2,
