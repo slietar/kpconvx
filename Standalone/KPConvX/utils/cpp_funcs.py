@@ -16,8 +16,8 @@ import torch
 from utils.rotation import create_3D_rotations
 
 # Subsampling extension
-import cpp_wrappers.cpp_subsampling.cpp_subsampling as cpp_subsampling
-import cpp_wrappers.cpp_neighbors.cpp_neighbors as cpp_neighbors
+import cpp_wrappers.cpp_subsampling as cpp_subsampling
+import cpp_wrappers.cpp_neighbors as cpp_neighbors
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -236,7 +236,7 @@ def batch_radius_neighbors(queries, supports, q_batches, s_batches, radius, neig
 
     # Apply limit
     neighbors = neighbors[:, :neighbor_limit]
-    
+
     # Reconvert to tensor if needed
     if from_torch:
         neighbors = torch.from_numpy(neighbors).to(torch.long)
@@ -267,7 +267,7 @@ def batch_knn_neighbors(queries, supports, q_batches, s_batches, radius, neighbo
 
     # Get radius neighbors
     neighbors, sq_dists = cpp_neighbors.batch_knn_neighbors(queries, supports, q_batches, s_batches, n_neighbors=neighbor_limit)
-    
+
     # Reconvert to tensor if needed
     if from_torch:
         neighbors = torch.from_numpy(neighbors).to(torch.long)
@@ -279,6 +279,3 @@ def batch_knn_neighbors(queries, supports, q_batches, s_batches, radius, neighbo
         return neighbors, dists
 
     return neighbors
-
-
-

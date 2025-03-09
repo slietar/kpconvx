@@ -1,0 +1,18 @@
+[build-system]
+requires = ["numpy~=1.26.4", "setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kpconvx-cpp"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy~=1.26.4",
+]
+
+# [tool.setuptools]
+# packages = []
+# ext-modules = [
+#   { name = "cpp_wrappers.cpp_neighbors", include_dirs = ["cpp_neighbors/neighbors"], sources = ["cpp_neighbors/neighbors/neighbors.cpp"] }
+# ]
