@@ -88,6 +88,7 @@ class KPConv(nn.Module):
       # (Q, H, K)
       influences = torch.relu(1 - distances / self.sigma)
 
+      # (Q, O)
       return torch.einsum('qhk, kco, qhc -> qo', influences, self.weights, neighbor_features)
 
 
