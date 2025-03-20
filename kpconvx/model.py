@@ -16,7 +16,7 @@ np.random.seed(0)
 torch.manual_seed(0)
 
 class Model(nn.Module):
-  def __init__(self):
+  def __init__(self, class_count: int):
     super().__init__()
 
     kernel_path = Path('kernel.npy')
@@ -47,6 +47,8 @@ class Model(nn.Module):
       output_feature_count=64,
     )
 
+    self.classif = nn.Linear(64, class_count)
+
   def forward(self, points1: torch.Tensor):
     features2 = self.kpconv1(points1, points1, torch.ones((points1.size(0), 1)))
 
@@ -55,7 +57,9 @@ class Model(nn.Module):
     # print(points1.size())
     # print(points3.size())
 
-    return points3, features3
+    # return points3, features3
+
+    return self.classif(features3.mean(dim=-2))
 
     # y = self.kpconv2(points, points, x)
     # return y
@@ -154,61 +158,61 @@ class GridKpConvPool(nn.Module):
 
 
 
-path = Path('s3dis/Area_1/conferenceRoom_1')
-points = np.load(path / 'coord.npy') # dtype: float32, shape: (n, 3)
-# colors = np.load(path / 'color.npy') # dtype: uint8, shape: (n, 3)
-# labels = np.load(path / 'segment.npy') # dtype: int16, shape: (n, 1)
+# path = Path('s3dis/Area_1/conferenceRoom_1')
+# points = np.load(path / 'coord.npy') # dtype: float32, shape: (n, 3)
+# # colors = np.load(path / 'color.npy') # dtype: uint8, shape: (n, 3)
+# # labels = np.load(path / 'segment.npy') # dtype: int16, shape: (n, 1)
 
-# write_ply('test_kernel.ply', [kernel.numpy() + points.min(axis=0)], ['x', 'y', 'z'])
+# # write_ply('test_kernel.ply', [kernel.numpy() + points.min(axis=0)], ['x', 'y', 'z'])
 
-print('Subsampling')
-points_subsampled = grid_subsample_fast(points, cell_size=0.05)
-print('Model')
+# print('Subsampling')
+# points_subsampled = grid_subsample_fast(points, cell_size=0.05)
+# print('Model')
 
-# points_subsampled = grid_max_pool(torch.tensor(points), torch.ones((points.shape[0], 1)), cell_size=0.05 * 2)[0].detach().numpy()
+# # points_subsampled = grid_max_pool(torch.tensor(points), torch.ones((points.shape[0], 1)), cell_size=0.05 * 2)[0].detach().numpy()
 
-# # print(points.shape)
-# # print(points_subsampled.shape)
+# # # print(points.shape)
+# # # print(points_subsampled.shape)
 
-# # write_ply('test_default.ply', [points], ['x', 'y', 'z'])
-# write_ply('test_subsampled.ply', [points_subsampled], ['x', 'y', 'z'])
-
-
-torch.autograd.set_detect_anomaly(True)
-
-model = Model()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-1)
-
-x_half = (points_subsampled[:, 0].max() - points_subsampled[:, 0].min()) * 0.5 + points_subsampled[:, 0].min()
-
-for _ in range(50):
-  model.train()
-  optimizer.zero_grad()
-
-  model_points, model_features = model(torch.tensor(points_subsampled))
-  # break
-
-  loss = ((model_features[model_points[:, 0] > x_half] - 1.0) ** 2).mean() + ((model_features[model_points[:, 0] <= x_half] + 1.0) ** 2).mean()
-  print(loss.item())
-  # print('features', model.kpconv1.weights.grad)
-
-  loss.backward()
-  optimizer.step()
+# # # write_ply('test_default.ply', [points], ['x', 'y', 'z'])
+# # write_ply('test_subsampled.ply', [points_subsampled], ['x', 'y', 'z'])
 
 
-# print(model_features.min(), model_features.max())
+# torch.autograd.set_detect_anomaly(True)
 
-# model_features -= model_features.min()
-# model_features /= model_features.max()
-model_features -= model_features.mean()
-model_features /= model_features.std()
-model_features = model_features.clamp(-1, 1)
+# model = Model()
+# optimizer = torch.optim.Adam(model.parameters(), lr=1e-1)
 
-model_features *= 255
-model_features = model_features.int()
+# x_half = (points_subsampled[:, 0].max() - points_subsampled[:, 0].min()) * 0.5 + points_subsampled[:, 0].min()
 
-print(model_features[np.random.randint(0, model_features.shape[0], size=100), 0])
+# for _ in range(50):
+#   model.train()
+#   optimizer.zero_grad()
 
-# print(model_points.detach().numpy(), model_features[:, :3].detach().numpy())
+#   model_points, model_features = model(torch.tensor(points_subsampled))
+#   # break
 
-write_ply('test_conv.ply', [model_points.detach().numpy(), model_features[:, :3].detach().numpy()], ['x', 'y', 'z', 'red', 'green', 'blue'])
+#   loss = ((model_features[model_points[:, 0] > x_half] - 1.0) ** 2).mean() + ((model_features[model_points[:, 0] <= x_half] + 1.0) ** 2).mean()
+#   print(loss.item())
+#   # print('features', model.kpconv1.weights.grad)
+
+#   loss.backward()
+#   optimizer.step()
+
+
+# # print(model_features.min(), model_features.max())
+
+# # model_features -= model_features.min()
+# # model_features /= model_features.max()
+# model_features -= model_features.mean()
+# model_features /= model_features.std()
+# model_features = model_features.clamp(-1, 1)
+
+# model_features *= 255
+# model_features = model_features.int()
+
+# print(model_features[np.random.randint(0, model_features.shape[0], size=100), 0])
+
+# # print(model_points.detach().numpy(), model_features[:, :3].detach().numpy())
+
+# write_ply('test_conv.ply', [model_points.detach().numpy(), model_features[:, :3].detach().numpy()], ['x', 'y', 'z', 'red', 'green', 'blue'])

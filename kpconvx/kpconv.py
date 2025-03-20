@@ -16,7 +16,7 @@ class KPConv(nn.Module):
     neighbor_count: int,
     output_feature_count: int,
     sigma: float = 1.0,
-    use_one_kernel_point_per_neighbor: bool = False,
+    use_one_kernel_point_per_neighbor: bool = True,
   ):
     super().__init__()
 
