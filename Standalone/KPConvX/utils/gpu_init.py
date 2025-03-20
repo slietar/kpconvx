@@ -32,10 +32,10 @@ def init_gpu(gpu_id='0'):
     """
 
     global USED_GPU
-    
+
     if len(USED_GPU) == 0:
         if gpu_id == 'auto':
-            
+
             # Automatic GPU choice, find a free GPU on the machine
             # (need pynvml to be installed)
             print('\nSearching a free GPU:')
@@ -57,7 +57,8 @@ def init_gpu(gpu_id='0'):
         # Set GPU visible device
         USED_GPU = gpu_id
 
-    return torch.device("cuda:" + USED_GPU)
+    # return torch.device("cuda:" + USED_GPU)
+    return torch.device('cpu')
 
 
 def tensor_MB(a):

@@ -61,7 +61,7 @@ def profile_S3DIS(net, test_loader, cfg, on_gpu=True, get_flops=False, test_path
         device = init_gpu()
     else:
         device = torch.device("cpu")
-        
+
 
     ####################
     # Initialize network
@@ -90,7 +90,7 @@ def profile_S3DIS(net, test_loader, cfg, on_gpu=True, get_flops=False, test_path
         ############
 
         softmax = torch.nn.Softmax(1)
-        
+
         underline('Profiling Speed of the network')
         message =  '\n                                                          Timings        '
         message += '\n Steps |   Votes   | GPU usage |      Speed      |   In   Batch  Forw  End '
@@ -129,7 +129,7 @@ def profile_S3DIS(net, test_loader, cfg, on_gpu=True, get_flops=False, test_path
 
             # Forward pass
             outputs = net(batch)
-            
+
             if 'cuda' in device.type:
                 torch.cuda.synchronize(device)
             t += [time.time()]
@@ -224,7 +224,7 @@ def profile_S3DIS(net, test_loader, cfg, on_gpu=True, get_flops=False, test_path
     if get_flops:
 
         # FLOPS
-        avg_flops = np.mean(all_flops)  / (float(B) * 1e9)  
+        avg_flops = np.mean(all_flops)  / (float(B) * 1e9)
 
         report_lines = ['']
         report_lines += ['Profile']
@@ -289,11 +289,11 @@ def test_S3DIS_log(chosen_log, new_cfg, weight_path='', save_visu=False, profile
     test_dataset = S3DIRDataset(new_cfg,
                                 chosen_set='test',
                                 precompute_pyramid=True)
-    
+
     # Calib from training data
     # test_dataset.calib_batch(new_cfg)
     # test_dataset.calib_neighbors(new_cfg)
-    
+
     # Initialize samplers
     test_sampler = SceneSegSampler(test_dataset)
     test_loader = DataLoader(test_dataset,
@@ -331,7 +331,7 @@ def test_S3DIS_log(chosen_log, new_cfg, weight_path='', save_visu=False, profile
     elif new_cfg.model.kp_mode.startswith('kpnext'):
         net = KPNeXt(new_cfg, modulated=modulated, deformable=False)
 
-        
+
     #########################
     # Load pretrained weights
     #########################
@@ -349,7 +349,7 @@ def test_S3DIS_log(chosen_log, new_cfg, weight_path='', save_visu=False, profile
     print("\nModel and training state restored from:")
     print(chosen_chkp)
     print()
-    
+
     ############
     # Start test
     ############
@@ -385,26 +385,26 @@ if __name__ == '__main__':
     #   --log_path: Path to the log folder that we want to test
     #   --weight_path: Path to the weight file that we want to test
     #
-    # If you provide the weight path, it has to be in the log_path folder. 
+    # If you provide the weight path, it has to be in the log_path folder.
     # It allows you to choose a specific weight file from the log folder.
 
     # Add argument here to handle it
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log_path', type=str)
+    parser.add_argument('--log_path', type=str, required=True)
     parser.add_argument('--weight_path', type=str)
-    parser.add_argument('--dataset_path', type=str)    
+    parser.add_argument('--dataset_path', type=str)
     parser.add_argument('--profile', action='store_true')
-    
+
     # Read arguments
     args = parser.parse_args()
     log_dir = args.log_path
     weights = args.weight_path
-    
+
     assert os.path.exists(log_dir), f"Log folder {log_dir} does not exist."
     if weights:
         assert os.path.exists(weights), f"Weight file {weights} does not exist."
         assert log_dir in weights, f"Weight file {weights} is not in log folder {log_dir}."
-    
+
 
     #############
     # Load config
@@ -421,9 +421,9 @@ if __name__ == '__main__':
     ###################
     # Define parameters
     ###################
-    
+
     # Optionally you can change some parameters from the config file. For example:
-        
+
     # Ensure we only have one point cloud in each batch for test
     new_cfg.test.batch_limit = 1
 
@@ -448,10 +448,3 @@ if __name__ == '__main__':
 
 
     test_S3DIS_log(log_dir, new_cfg, weight_path=weights, profile=args.profile)
-    
-
-
-
-
-
-

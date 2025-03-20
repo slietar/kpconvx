@@ -134,7 +134,7 @@ def spherical_Lloyd_gpu(radius, num_cells, num_kernels=1, dimension=3, fixed='ce
         # Get the distances matrix [n_approx, nk, K, dim] -> [n_approx, nk, K]
         differences = X.unsqueeze(1).unsqueeze(2) - k_pts
         sq_distances = torch.sum(torch.square(differences), dim=-1)
-        
+
         # Compute cell centers [n_approx, nk]
         cell_inds = torch.argmin(sq_distances, dim=-1)
 
@@ -186,7 +186,7 @@ def spherical_Lloyd_gpu(radius, num_cells, num_kernels=1, dimension=3, fixed='ce
             print('iter {:5d} / max move = {:f}'.format(iter, max_moves[-1]))
             if warning:
                 print('{:}WARNING: at least one point has no cell{:}'.format(bcolors.WARNING, bcolors.ENDC))
-        
+
 
     ###################
     # User verification
@@ -231,7 +231,7 @@ def spherical_Lloyd_gpu(radius, num_cells, num_kernels=1, dimension=3, fixed='ce
     best_i = np.argmin(all_shell_std)
     k_pts = k_pts[best_i]
     avg_volume = avg_volume[best_i]
-    
+
     # Show the convergence to ask user if this kernel is correct
     if verbose:
         all_volumes = all_volumes[:, best_i, :]
@@ -479,7 +479,7 @@ def shell_kernel_generator(radius, shell_n_pts, num_kernels=1, dimension=3, verb
         # Reduce gradients to tangential components (nk, K, 3)
         normals = kernel_points / (torch.linalg.norm(kernel_points, dim=-1, keepdims=True) + 1e-6)
         gradients -= torch.sum(gradients * normals, dim=-1, keepdims=True) * normals
-            
+
 
         # Stop condition
         # **************
@@ -558,7 +558,7 @@ def load_kernels(radius, shell_sizes, dimension, fixed, lloyd=False):
     if not exists(kernel_file):
 
         if lloyd:
-            
+
             # Try multiple times and take the minimum std of volumes
             min_std = 1.0
             for _ in range(10):
@@ -571,7 +571,7 @@ def load_kernels(radius, shell_sizes, dimension, fixed, lloyd=False):
                 if std < min_std:
                     min_std = std
                     kernel_points = k_candidates
-            
+
         else:
             # Create kernels
             kernel_points, grad_norms = shell_kernel_generator(1.0,
@@ -642,3 +642,6 @@ def load_kernels(radius, shell_sizes, dimension, fixed, lloyd=False):
 
     return kernel_points.astype(np.float32)
 
+
+if __name__ == '__main__':
+    shell_kernel_generator(1.0, [1, 10, 10], num_kernels=1, dimension=2, verbose=2)
